@@ -6,7 +6,7 @@ Conversion, retention, and price elasticity modelling for UK personal lines insu
 
 ## The Problem
 
-UK personal lines insurers price using risk models — pure premium equals frequency times severity. That's the right starting point, but the market outcome depends on something the risk model doesn't capture: whether the customer accepts the quoted price.
+UK personal lines insurers price using risk models  - pure premium equals frequency times severity. That's the right starting point, but the market outcome depends on something the risk model doesn't capture: whether the customer accepts the quoted price.
 
 You can have a perfectly calibrated GLM and still be pricing wrong commercially. Quote too high and conversion rate falls; quote too low and you've left margin on the table. The demand model is what connects the technical premium to the commercial outcome.
 
@@ -16,7 +16,7 @@ This has two components that the industry treats as separate problems:
 
 2. **Dynamic demand (elasticity)**: How does P(buy) respond to price changes? This is the question for optimisation. A 5% price increase on inelastic customers costs you almost nothing in volume but recovers substantial margin. On elastic customers, the same increase can wipe out the book.
 
-The industry has the right framework — Akur8, Earnix, and Radar all implement it. None of them expose a Python API, and none of them show you their methodology. When the FCA asks how you arrived at your renewal pricing, "the vendor's algorithm" is not a satisfying answer.
+The industry has the right framework  - Akur8, Earnix, and Radar all implement it. None of them expose a Python API, and none of them show you their methodology. When the FCA asks how you arrived at your renewal pricing, "the vendor's algorithm" is not a satisfying answer.
 
 This library covers the full pipeline, open source, with documented methodology at each step.
 
@@ -36,25 +36,25 @@ What it does ban:
 - Setting a renewal price above the equivalent new business price (ENBP)
 - Using estimated "inertia" (propensity to renew) to justify a higher renewal price
 
-This library includes an `ENBPChecker` that audits a renewal portfolio for ENBP compliance and a `price_walking_report` that detects systematic tenure-based price patterns — the diagnostic the FCA uses in multi-firm reviews.
+This library includes an `ENBPChecker` that audits a renewal portfolio for ENBP compliance and a `price_walking_report` that detects systematic tenure-based price patterns  - the diagnostic the FCA uses in multi-firm reviews.
 
 ---
 
 ## Install
 
 ```bash
-pip install insurance-demand
+uv add insurance-demand
 ```
 
 With optional extras:
 
 ```bash
-pip install insurance-demand[catboost]   # CatBoost backend for models
-pip install insurance-demand[dml]        # DML elasticity (doubleml + catboost)
-pip install insurance-demand[causal]     # Heterogeneous effects (econml)
-pip install insurance-demand[survival]   # Cox/Weibull retention models (lifelines)
-pip install insurance-demand[plot]       # DemandCurve.plot()
-pip install insurance-demand[all]        # Everything
+uv add insurance-demand[catboost]   # CatBoost backend for models
+uv add insurance-demand[dml]        # DML elasticity (doubleml + catboost)
+uv add insurance-demand[causal]     # Heterogeneous effects (econml)
+uv add insurance-demand[survival]   # Cox/Weibull retention models (lifelines)
+uv add insurance-demand[plot]       # DemandCurve.plot()
+uv add insurance-demand[all]        # Everything
 ```
 
 ---
@@ -134,12 +134,12 @@ Two backends:
 - `logistic`: sklearn LogisticRegression. Interpretable coefficients, analytical marginal effects. Start here.
 - `catboost`: CatBoost classifier. Handles non-linear interactions between price, channel, and risk class. Better predictive accuracy on real data.
 
-Price treatment: uses `log(quoted_price / technical_premium)` by default — the commercial loading rather than the absolute price. This follows industry practice (Guven & McPhail 2013, CAS) and makes the coefficient interpretable across risk segments.
+Price treatment: uses `log(quoted_price / technical_premium)` by default  - the commercial loading rather than the absolute price. This follows industry practice (Guven & McPhail 2013, CAS) and makes the coefficient interpretable across risk segments.
 
 PCW rank position is included as a separate feature because rank has a discrete demand effect that price ratio alone doesn't capture. Being cheapest versus second cheapest on a PCW is worth more than the price gap would suggest.
 
 ```python
-# Naive marginal effect (biased — confounding not removed)
+# Naive marginal effect (biased  - confounding not removed)
 me = conv_model.marginal_effect(df)
 
 # One-way: observed vs. fitted conversion by factor level
@@ -159,7 +159,7 @@ Four backends:
 - `cox`: Cox proportional hazards via lifelines. Better for CLV models where you need survival curves across multiple future renewals.
 - `weibull`: Weibull AFT model. More flexible hazard shape than Cox.
 
-The treatment variable is `log(renewal_price / prior_year_price)` — the price change, not the absolute price. This is what the customer responds to: a renewal feels expensive relative to what they paid last year, not relative to the actuarial technical premium they've never seen.
+The treatment variable is `log(renewal_price / prior_year_price)`  - the price change, not the absolute price. This is what the customer responds to: a renewal feels expensive relative to what they paid last year, not relative to the actuarial technical premium they've never seen.
 
 ```python
 # Lapse probability
@@ -201,7 +201,7 @@ est.sensitivity_analysis()
 cates = est.effect(df_quotes)
 ```
 
-**Data requirements**: At minimum 20,000 observations with genuine within-segment price variation. Rate review periods (where the portfolio loading changes uniformly for a quarter) are the primary source of identification. You need technical premium stored at quote time — retroactively recalculated tech premiums will introduce errors.
+**Data requirements**: At minimum 20,000 observations with genuine within-segment price variation. Rate review periods (where the portfolio loading changes uniformly for a quarter) are the primary source of identification. You need technical premium stored at quote time  - retroactively recalculated tech premiums will introduce errors.
 
 ### DemandCurve
 
@@ -211,7 +211,7 @@ Two parametric forms:
 - `semi_log`: `logit(p) = α + β × log(price)`. Elasticity varies with the probability level. Appropriate for binary outcomes.
 - `log_linear`: `log(p) = α + ε × log(price)`. Constant elasticity. Simpler interpretation.
 
-Or use a fitted model directly (`functional_form='model'`) — the curve evaluates the model at each price point, averaged over a reference portfolio.
+Or use a fitted model directly (`functional_form='model'`)  - the curve evaluates the model at each price point, averaged over a reference portfolio.
 
 ```python
 curve = DemandCurve(
@@ -264,7 +264,7 @@ walking = price_walking_report(df_renewals, nb_price_col="nb_equivalent_price")
 
 ## Key Design Decisions
 
-**Why separate ConversionModel from ElasticityEstimator**: These answer different questions. The conversion model gives you expected volume at current prices — useful for forecasting. The elasticity estimator gives you the causal response to price changes — required for optimisation. Conflating them produces the bias that DML fixes.
+**Why separate ConversionModel from ElasticityEstimator**: These answer different questions. The conversion model gives you expected volume at current prices  - useful for forecasting. The elasticity estimator gives you the causal response to price changes  - required for optimisation. Conflating them produces the bias that DML fixes.
 
 **Why log(price/technical_premium) as the treatment**: The absolute quoted price is dominated by risk composition. A £600 policy on a high-risk driver and a £600 policy on a low-risk driver mean different things. The price-to-technical-premium ratio isolates commercial decision-making from risk. Variation in this ratio (driven by quarterly rate reviews, not individual risk assessment) is approximately exogenous.
 
