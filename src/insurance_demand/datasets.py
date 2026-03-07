@@ -236,7 +236,7 @@ def generate_conversion_data(
 
 def generate_retention_data(
     n_policies: int = 80_000,
-    true_price_change_elasticity: float = -3.5,
+    true_price_change_elasticity: float = 3.5,
     seed: int = 42,
 ) -> pl.DataFrame:
     """
@@ -249,8 +249,8 @@ def generate_retention_data(
       (longer = stickier), NCD (higher = stickier), payment method (DD = stickier),
       and channel of original acquisition.
     - The true elasticity of lapse probability w.r.t. price change is
-      ``true_price_change_elasticity`` (default -3.5). This means a 10% price
-      increase raises the log-odds of lapsing by -3.5 × log(1.10) ≈ 0.33,
+      ``true_price_change_elasticity`` (default 3.5). This means a 10% price
+      increase raises the log-odds of lapsing by 3.5 × log(1.10) ≈ 0.33,
       which translates to roughly a 3–5pp increase in lapse rate depending on
       the base rate.
 
@@ -264,7 +264,7 @@ def generate_retention_data(
         Number of renewal offers to generate. Default 80,000.
     true_price_change_elasticity : float
         Log-odds effect of a 1-unit increase in log(renewal_price / prior_price).
-        Should be negative (higher price increase → more lapses).
+        Should be positive (higher price increase → higher lapse log-odds → more lapses).
     seed : int
         Random seed.
 
@@ -372,7 +372,7 @@ def generate_retention_data(
     pcw_sensitivity = np.where(channel == "direct", -0.4, 0.0)
 
     lapse_logit = (
-        -2.2  # baseline: ~10% lapse at no price change, average features
+        -1.3  # baseline: ~12% lapse at no price change, average features
         + true_price_change_elasticity * log_price_change
         + dd_effect
         + cheque_effect

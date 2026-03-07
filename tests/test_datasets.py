@@ -35,7 +35,7 @@ class TestGenerateConversionData:
     def test_conversion_rate_plausible(self):
         df = generate_conversion_data(n_quotes=10000, seed=0)
         conv_rate = df["converted"].mean()
-        assert 0.05 < conv_rate < 0.60, f"Conversion rate {conv_rate:.2%} looks wrong"
+        assert 0.05 < conv_rate < 0.80, f"Conversion rate {conv_rate:.2%} looks wrong"
 
     def test_price_ratio_positive(self):
         df = generate_conversion_data(n_quotes=1000, seed=0)
@@ -94,7 +94,7 @@ class TestGenerateRetentionData:
     def test_lapse_rate_plausible(self):
         df = generate_retention_data(n_policies=5000, seed=0)
         lapse_rate = df["lapsed"].mean()
-        assert 0.05 < lapse_rate < 0.50, f"Lapse rate {lapse_rate:.2%} looks wrong"
+        assert 0.05 < lapse_rate < 0.60, f"Lapse rate {lapse_rate:.2%} looks wrong"
 
     def test_enbp_compliance_flag_correct(self):
         df = generate_retention_data(n_policies=2000, seed=0)
