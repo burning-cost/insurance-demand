@@ -1,0 +1,95 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "insurance-demand"
+version = "0.1.0"
+description = "Conversion, retention, and price elasticity modelling for UK personal lines insurance"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Burning Cost", email = "pricing.frontier@gmail.com" },
+]
+keywords = [
+    "insurance",
+    "demand",
+    "price elasticity",
+    "conversion",
+    "retention",
+    "DML",
+    "causal inference",
+    "GIPP",
+    "PS21/11",
+    "actuarial",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "numpy>=1.24",
+    "polars>=0.20",
+    "pandas>=2.0",
+    "scikit-learn>=1.3",
+    "scipy>=1.11",
+    "statsmodels>=0.14",
+]
+
+[project.optional-dependencies]
+catboost = [
+    "catboost>=1.2",
+]
+dml = [
+    "doubleml>=0.7",
+    "catboost>=1.2",
+]
+causal = [
+    "econml>=0.15",
+    "catboost>=1.2",
+]
+survival = [
+    "lifelines>=0.27",
+]
+plot = [
+    "matplotlib>=3.7",
+]
+all = [
+    "catboost>=1.2",
+    "doubleml>=0.7",
+    "econml>=0.15",
+    "lifelines>=0.27",
+    "matplotlib>=3.7",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "catboost>=1.2",
+    "doubleml>=0.7",
+    "econml>=0.15",
+    "lifelines>=0.27",
+    "matplotlib>=3.7",
+]
+
+[project.urls]
+Repository = "https://github.com/burningcost/insurance-demand"
+Issues = "https://github.com/burningcost/insurance-demand/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/insurance_demand"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--tb=short"
