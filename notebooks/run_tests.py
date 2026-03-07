@@ -2,8 +2,26 @@
 # MAGIC %md
 # MAGIC # insurance-demand: Test Runner
 # MAGIC
-# MAGIC Runs tests using the Databricks system Python (/databricks/python) which
-# MAGIC has a compatible version of pyarrow and scikit-learn pre-installed.
+# MAGIC Note on the environment: Databricks serverless uses an ephemeral venv for
+# MAGIC packages installed via %pip. The venv's scikit-learn conflicts with the
+# MAGIC pre-installed pyarrow. Solution: reinstall pyarrow AFTER other packages
+# MAGIC to get a compatible version, or exclude doubleml/statsmodels from the
+# MAGIC install path used for tests (they're optional for core tests).
+# MAGIC
+# MAGIC The core tests (datasets, conversion, retention, demand_curve, optimiser,
+# MAGIC compliance) only require: polars, catboost, scipy, statsmodels, sklearn, pandas.
+# MAGIC They do NOT require doubleml or econml. We run those separately.
+
+# COMMAND ----------
+
+# Install packages. Note: we install pyarrow last (after any sklearn upgrade)
+# to ensure a compatible version is in place.
+# MAGIC %pip install polars catboost lifelines statsmodels pytest
+
+# COMMAND ----------
+
+# Reinstall pyarrow to get a version compatible with the freshly installed sklearn
+# MAGIC %pip install "pyarrow>=14.0" --upgrade --quiet
 
 # COMMAND ----------
 
@@ -11,33 +29,21 @@ import subprocess
 import sys
 import os
 
-SYSTEM_PIP = "/databricks/python/bin/pip"
-SYSTEM_PYTHON = "/databricks/python/bin/python3"
-
-# Install everything into the system Python (which has the correct pyarrow)
-packages = ["polars", "catboost", "doubleml", "lifelines", "statsmodels", "pytest"]
-install = subprocess.run(
-    [SYSTEM_PIP, "install"] + packages + ["--quiet"],
-    capture_output=True, text=True
-)
-print("Install exit code:", install.returncode)
-if install.returncode != 0:
-    print(install.stderr[-2000:])
-else:
-    print("OK")
-
-# COMMAND ----------
-
-# Clone repo
+# Clone the repo
 clone = subprocess.run(
-    ["git", "clone", "--depth=1", "https://github.com/burningcost/insurance-demand.git", "/tmp/insurance-demand"],
+    ["git", "clone", "--depth=1",
+     "https://github.com/burningcost/insurance-demand.git",
+     "/tmp/insurance-demand"],
     capture_output=True, text=True
 )
 print("Clone:", clone.returncode, clone.stderr[:200] if clone.returncode != 0 else "OK")
 
-# Install library (no-deps — sklearn/numpy/scipy already in system Python)
+# COMMAND ----------
+
+# Install library without reinstalling deps (use the venv's sklearn/pandas/scipy)
 lib_install = subprocess.run(
-    [SYSTEM_PIP, "install", "-e", "/tmp/insurance-demand", "--no-deps", "--quiet"],
+    [sys.executable, "-m", "pip", "install", "-e",
+     "/tmp/insurance-demand", "--no-deps", "--quiet"],
     capture_output=True, text=True
 )
 print("Library install:", lib_install.returncode)
@@ -49,7 +55,7 @@ if lib_install.returncode != 0:
 env = {**os.environ, "PYTHONPATH": "/tmp/insurance-demand/src"}
 
 result = subprocess.run(
-    [SYSTEM_PYTHON, "-m", "pytest",
+    [sys.executable, "-m", "pytest",
      "/tmp/insurance-demand/tests/",
      "-v", "--tb=short", "--no-header"],
     capture_output=True, text=True,
