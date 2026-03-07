@@ -2,22 +2,50 @@
 # MAGIC %md
 # MAGIC # insurance-demand: Test Runner
 # MAGIC
-# MAGIC Key constraint: do NOT reinstall scikit-learn, numpy, scipy, or pyarrow.
-# MAGIC Databricks serverless pre-installs these against its own pyarrow version.
-# MAGIC Reinstalling from PyPI causes an `_ARRAY_API not found` AttributeError.
-# MAGIC
-# MAGIC Strategy: install polars, catboost, doubleml, lifelines, and pytest explicitly,
-# MAGIC then install the library with --no-deps.
-
-# COMMAND ----------
-
-# MAGIC %pip install polars catboost doubleml lifelines pytest statsmodels
+# MAGIC Uses the Databricks system Python (not the ephemeral venv) to avoid the
+# MAGIC pyarrow/_ARRAY_API conflict that occurs when scikit-learn is reinstalled
+# MAGIC via %pip in a serverless environment.
 
 # COMMAND ----------
 
 import subprocess
 import sys
 import os
+
+# Identify the system Python (not the ephemeral venv pip uses)
+# On Databricks serverless, /databricks/python/bin/python3 is the stable interpreter
+system_pythons = [
+    "/databricks/python/bin/python3",
+    "/databricks/python3/bin/python3",
+    "/usr/bin/python3",
+]
+system_python = None
+for p in system_pythons:
+    check = subprocess.run([p, "--version"], capture_output=True, text=True)
+    if check.returncode == 0:
+        system_python = p
+        print(f"Using system Python: {p} ({check.stdout.strip()})")
+        break
+
+if system_python is None:
+    system_python = sys.executable
+    print(f"Falling back to current Python: {system_python}")
+
+# COMMAND ----------
+
+# Install packages into the system Python (avoids the venv/pyarrow conflict)
+packages = ["polars", "catboost", "doubleml", "lifelines", "statsmodels", "pytest"]
+install = subprocess.run(
+    [system_python, "-m", "pip", "install"] + packages + ["--quiet"],
+    capture_output=True, text=True
+)
+print("Install exit code:", install.returncode)
+if install.returncode != 0:
+    print(install.stderr[-1000:])
+else:
+    print("Packages installed OK")
+
+# COMMAND ----------
 
 # Clone the repo to get test files
 clone = subprocess.run(
@@ -28,16 +56,14 @@ print("Clone:", clone.returncode, clone.stderr[:200] if clone.returncode != 0 el
 
 # COMMAND ----------
 
-# Install the library itself without reinstalling sklearn/numpy/scipy/pandas
-install = subprocess.run(
-    [sys.executable, "-m", "pip", "install", "-e", "/tmp/insurance-demand",
-     "--no-deps"],
+# Install library itself (no-deps: sklearn/numpy/scipy/pandas already present)
+lib_install = subprocess.run(
+    [system_python, "-m", "pip", "install", "-e", "/tmp/insurance-demand", "--no-deps", "--quiet"],
     capture_output=True, text=True
 )
-print("Install:", install.returncode)
-print(install.stdout[-500:] if install.stdout else "")
-if install.returncode != 0:
-    print(install.stderr[-500:])
+print("Library install:", lib_install.returncode)
+if lib_install.returncode != 0:
+    print(lib_install.stderr[-500:])
 
 # COMMAND ----------
 
@@ -45,7 +71,7 @@ env = {**os.environ, "PYTHONPATH": "/tmp/insurance-demand/src"}
 
 result = subprocess.run(
     [
-        sys.executable, "-m", "pytest",
+        system_python, "-m", "pytest",
         "/tmp/insurance-demand/tests/",
         "-v", "--tb=short", "--no-header",
     ],
