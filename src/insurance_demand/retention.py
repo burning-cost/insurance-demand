@@ -147,6 +147,7 @@ class RetentionModel:
 
     def _fit_logistic(self, X: pd.DataFrame, y: np.ndarray) -> None:
         cat_cols = [c for c in X.columns if X[c].dtype == object]
+        self._logistic_cat_cols = cat_cols  # store for predict-time encoding
         X_enc = pd.get_dummies(X, columns=cat_cols, drop_first=True, dtype=float)
         self._encoded_columns = X_enc.columns.tolist()
 
@@ -265,8 +266,9 @@ class RetentionModel:
         X, _ = self._build_features(df, training=False)
 
         if self.model_type == "logistic":
-            X_enc = pd.get_dummies(X, drop_first=True, dtype=float)
-            X_enc = X_enc.reindex(columns=self._feature_names_in, fill_value=0)
+            X_enc = _encode_categoricals(
+                X, self._logistic_cat_cols, self._feature_names_in
+            )
             probs = self._model.predict_proba(X_enc)[:, 1]
         else:
             probs = self._model.predict_proba(X)[:, 1]
@@ -499,3 +501,7 @@ class RetentionModel:
     def _check_fitted(self) -> None:
         if not self._fitted:
             raise RuntimeError("Model is not fitted. Call .fit(data) first.")
+
+
+# Re-export the shared encoding helper (same logic as in conversion.py)
+from .conversion import _encode_categoricals

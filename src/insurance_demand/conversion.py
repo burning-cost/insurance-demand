@@ -163,6 +163,7 @@ class ConversionModel:
         """Fit sklearn LogisticRegression with standard scaling."""
         # One-hot encode categoricals for logistic
         cat_mask = [c for c in X.columns if X[c].dtype == object]
+        self._logistic_cat_cols = cat_mask  # store for predict-time encoding
         X_encoded = pd.get_dummies(X, columns=cat_mask, drop_first=True, dtype=float)
         self._encoded_columns = X_encoded.columns.tolist()
 
@@ -513,3 +514,50 @@ def _to_pandas(data: DataFrameLike) -> pd.DataFrame:
     except ImportError:
         pass
     raise TypeError(f"Expected pandas or Polars DataFrame, got {type(data)}")
+
+
+def _encode_categoricals(
+    X: pd.DataFrame,
+    cat_columns: list[str],
+    training_dummies: list[str],
+) -> pd.DataFrame:
+    """
+    One-hot encode categorical columns using the training-time column list.
+
+    Unlike pd.get_dummies(drop_first=True), this function correctly handles
+    test data where only a single category is present (which causes get_dummies
+    to produce 0 columns, breaking the downstream reindex).
+
+    Encodes using the same reference category (alphabetically first) that
+    drop_first=True would have used at training time, but explicitly constructs
+    each indicator column from the training_dummies list.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        Feature matrix (may contain categorical columns).
+    cat_columns : list of str
+        Categorical columns to encode.
+    training_dummies : list of str
+        Expected output column names (from pd.get_dummies at training time).
+
+    Returns
+    -------
+    pd.DataFrame
+        Fully encoded DataFrame with columns matching training_dummies.
+    """
+    X_out = X.drop(columns=[c for c in cat_columns if c in X.columns]).copy()
+
+    for col in cat_columns:
+        if col not in X.columns:
+            continue
+        # Add indicator columns for each dummy in training_dummies that
+        # corresponds to this column
+        prefix = col + "_"
+        for dummy_col in training_dummies:
+            if dummy_col.startswith(prefix):
+                category = dummy_col[len(prefix):]
+                X_out[dummy_col] = (X[col].astype(str) == category).astype(float)
+
+    # Reindex to match training columns exactly (fills missing with 0)
+    return X_out.reindex(columns=training_dummies, fill_value=0.0)
