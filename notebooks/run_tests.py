@@ -1,13 +1,17 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # insurance-demand: Test Runner
+# MAGIC
+# MAGIC Key constraint: do NOT reinstall scikit-learn, numpy, scipy, or pyarrow.
+# MAGIC Databricks serverless pre-installs these against its own pyarrow version.
+# MAGIC Reinstalling from PyPI causes an `_ARRAY_API not found` AttributeError.
+# MAGIC
+# MAGIC Strategy: install polars, catboost, doubleml, lifelines, and pytest explicitly,
+# MAGIC then install the library with --no-deps.
 
 # COMMAND ----------
 
-# Install only what is not pre-installed on Databricks.
-# Critically: do NOT reinstall scikit-learn or numpy — they conflict with
-# Databricks' pre-installed pyarrow when reinstalled via pip in a serverless env.
-# MAGIC %pip install catboost doubleml lifelines pytest
+# MAGIC %pip install polars catboost doubleml lifelines pytest statsmodels
 
 # COMMAND ----------
 
@@ -24,15 +28,16 @@ print("Clone:", clone.returncode, clone.stderr[:200] if clone.returncode != 0 el
 
 # COMMAND ----------
 
-# Install the library itself (editable, uses already-installed sklearn/numpy)
+# Install the library itself without reinstalling sklearn/numpy/scipy/pandas
 install = subprocess.run(
     [sys.executable, "-m", "pip", "install", "-e", "/tmp/insurance-demand",
-     "--no-deps"],  # no-deps: don't reinstall scipy/numpy/sklearn from PyPI
+     "--no-deps"],
     capture_output=True, text=True
 )
 print("Install:", install.returncode)
-print(install.stdout[-1000:] if install.stdout else "")
-print(install.stderr[-500:] if install.stderr else "")
+print(install.stdout[-500:] if install.stdout else "")
+if install.returncode != 0:
+    print(install.stderr[-500:])
 
 # COMMAND ----------
 
