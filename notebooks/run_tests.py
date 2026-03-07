@@ -4,8 +4,10 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install "git+https://github.com/burningcost/insurance-demand.git" \
-# MAGIC   catboost doubleml lifelines matplotlib pytest
+# Install only what is not pre-installed on Databricks.
+# Critically: do NOT reinstall scikit-learn or numpy — they conflict with
+# Databricks' pre-installed pyarrow when reinstalled via pip in a serverless env.
+# MAGIC %pip install catboost doubleml lifelines pytest
 
 # COMMAND ----------
 
@@ -19,6 +21,18 @@ clone = subprocess.run(
     capture_output=True, text=True
 )
 print("Clone:", clone.returncode, clone.stderr[:200] if clone.returncode != 0 else "OK")
+
+# COMMAND ----------
+
+# Install the library itself (editable, uses already-installed sklearn/numpy)
+install = subprocess.run(
+    [sys.executable, "-m", "pip", "install", "-e", "/tmp/insurance-demand",
+     "--no-deps"],  # no-deps: don't reinstall scipy/numpy/sklearn from PyPI
+    capture_output=True, text=True
+)
+print("Install:", install.returncode)
+print(install.stdout[-1000:] if install.stdout else "")
+print(install.stderr[-500:] if install.stderr else "")
 
 # COMMAND ----------
 
