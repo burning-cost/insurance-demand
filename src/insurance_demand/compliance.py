@@ -2,12 +2,12 @@
 ENBP compliance utilities for PS21/11 (GIPP).
 
 The core rule from ICOBS 6B.3: at renewal, the price offered to an existing
-customer must be no higher than the Equivalent New Business Price (ENBP) —
+customer must be no higher than the Equivalent New Business Price (ENBP) -
 the price that would be offered to the same customer as a new customer through
 the same channel.
 
 This module does NOT enforce ENBP automatically in any model or optimiser.
-That would be presumptuous — your pricing system may have legitimate reasons
+That would be presumptuous - your pricing system may have legitimate reasons
 for a slight discrepancy at the reporting date, and ENBP calculation requires
 accessing your actual NB rating output (which this library doesn't control).
 
@@ -267,7 +267,7 @@ def price_walking_report(
     price-to-ENBP ratio if nb_price_col is supplied) by tenure band.
 
     A rising price-vs-tenure pattern after controlling for channel is a signal
-    of potential non-compliance. This is a diagnostic tool — not a definitive
+    of potential non-compliance. This is a diagnostic tool - not a definitive
     compliance assessment.
 
     Parameters

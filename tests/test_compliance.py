@@ -23,7 +23,7 @@ class TestENBPChecker:
         assert isinstance(report, ENBPBreachReport)
 
     def test_compliant_data_has_no_breaches(self):
-        """The synthetic data generator enforces ENBP — should have zero breaches."""
+        """The synthetic data generator enforces ENBP - should have zero breaches."""
         report = self.checker.check(_DF)
         assert report.n_breaches == 0
         assert report.breach_rate == 0.0

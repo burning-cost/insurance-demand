@@ -17,7 +17,7 @@ Two functional forms are supported:
    constant (percentage demand change is fixed percentage of price change).
 
 2. ``'semi_log'``: logit(p) = α + β × log(price). This uses the logistic link.
-   Elasticity varies with the probability level — it is highest at p=0.5 and
+   Elasticity varies with the probability level - it is highest at p=0.5 and
    approaches zero near the boundaries. More appropriate for binary outcomes.
 
 The model predictions take precedence over the parametric forms when a fitted
@@ -361,7 +361,7 @@ class DemandCurve:
         except ImportError:
             raise ImportError(
                 "matplotlib is required for plotting. "
-                "Install with: pip install insurance-demand[plot]"
+                "Install with: uv pip install insurance-demand[plot]"
             )
 
         prices, probs = self.evaluate(price_range, n_points, context)

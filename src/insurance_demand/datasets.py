@@ -4,7 +4,7 @@ Synthetic datasets for insurance demand modelling.
 Two data generating processes are implemented here:
 
 1. ``generate_conversion_data``: Simulates a UK motor PCW new business quote
-   panel. The DGP has genuine confounding — high-risk customers receive higher
+   panel. The DGP has genuine confounding - high-risk customers receive higher
    technical premiums and are also less price-sensitive because they have fewer
    alternatives. A naive logistic regression on price will overestimate
    elasticity. DML corrects this.
@@ -57,7 +57,7 @@ def generate_conversion_data(
       log(price), with PCW rank position as an additional driver.
     - Confounding: high-risk customers (young age, high vehicle group) have
       BOTH higher technical premiums AND lower price elasticity (|β| is
-      smaller for them — fewer alternatives means sticking with whoever quotes).
+      smaller for them - fewer alternatives means sticking with whoever quotes).
 
     The true population-average elasticity is ``true_price_elasticity``
     (default -2.0, meaning a 1% price increase → 2% conversion drop). This
@@ -287,7 +287,7 @@ def generate_retention_data(
         - price_change_pct : float  (% change: (renewal - prior) / prior)
         - log_price_change : float  (log(renewal_price / prior_year_price))
         - technical_premium : float  (at renewal date)
-        - nb_equivalent_price : float  (ENBP — new business price for same risk)
+        - nb_equivalent_price : float  (ENBP - new business price for same risk)
         - enbp_compliant : bool  (renewal_price <= nb_equivalent_price)
         - lapsed : int  (1 = lapsed, 0 = renewed)
         - true_lapse_prob : float  (for validation)

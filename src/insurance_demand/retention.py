@@ -5,7 +5,7 @@ Two backends with meaningfully different trade-offs:
 
 1. ``'logistic'``: Logistic GLM (or CatBoost) on a binary outcome (lapsed/renewed
    at next anniversary). Fast to fit, easy to interpret, standard in the industry.
-   The price_change_col is the key treatment variable — but the coefficient will
+   The price_change_col is the key treatment variable - but the coefficient will
    be biased if price changes are correlated with unobserved customer characteristics.
 
 2. ``'cox'`` / ``'weibull'``: Survival model on time-to-lapse, handling mid-term
@@ -22,7 +22,7 @@ Post-PS21/11 note:
 This model tells you who will lapse at a given price. Under PS21/11, you cannot
 use lapse propensity to SET a higher renewal price (that's the loyalty penalty).
 You CAN use it to identify which customers benefit from a targeted retention
-discount (a discount is permitted — you're moving below ENBP, not above it).
+discount (a discount is permitted - you're moving below ENBP, not above it).
 """
 
 from __future__ import annotations
@@ -170,7 +170,7 @@ class RetentionModel:
         except ImportError:
             raise ImportError(
                 "catboost is required for model_type='catboost'. "
-                "Install with: pip install insurance-demand[catboost]"
+                "Install with: uv pip install insurance-demand[catboost]"
             )
         default_params = {
             "iterations": 500,
@@ -198,7 +198,7 @@ class RetentionModel:
         except ImportError:
             raise ImportError(
                 f"lifelines is required for model_type='{self.model_type}'. "
-                "Install with: pip install insurance-demand[survival]"
+                "Install with: uv pip install insurance-demand[survival]"
             )
 
         if self.duration_col is None:

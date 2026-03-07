@@ -10,13 +10,13 @@
 # MAGIC
 # MAGIC 1. Model conversion probability (P(buy | price, features)) for new business
 # MAGIC 2. Model renewal probability (P(renew | features, price_change)) for the book
-# MAGIC 3. Estimate the *causal* price elasticity using DML — not the biased naive estimate
+# MAGIC 3. Estimate the *causal* price elasticity using DML - not the biased naive estimate
 # MAGIC 4. Build demand curves to understand how volume responds to price changes
 # MAGIC 5. Find the optimal price for a segment subject to ENBP and margin constraints
 # MAGIC
 # MAGIC **The regulatory context**: FCA PS21/11 bans charging renewing customers more than
 # MAGIC the equivalent new business price (ENBP). Demand modelling is permitted and
-# MAGIC encouraged — it's how you decide who to offer targeted retention discounts to.
+# MAGIC encouraged - it's how you decide who to offer targeted retention discounts to.
 # MAGIC What's banned is using inertia to justify *surcharging*. The ENBP check at the
 # MAGIC end of this notebook demonstrates how to audit your renewal portfolio for compliance.
 
@@ -155,7 +155,7 @@ print(f"True elasticity: -2.000 (embedded in DGP)")
 print(f"Bias: {naive_elasticity.mean() - (-2.0):+.3f}")
 print()
 print("The naive logistic regression underestimates elasticity because high-risk")
-print("customers get higher prices AND have lower price sensitivity — confounding")
+print("customers get higher prices AND have lower price sensitivity - confounding")
 print("that DML removes via residualisation.")
 
 # COMMAND ----------
@@ -164,7 +164,7 @@ print("that DML removes via residualisation.")
 # MAGIC ## 3. Retention Model (Renewals)
 # MAGIC
 # MAGIC We fit a logistic model on the renewal portfolio. The key treatment variable is
-# MAGIC log(renewal_price / prior_year_price) — the price change from the prior year.
+# MAGIC log(renewal_price / prior_year_price) - the price change from the prior year.
 # MAGIC
 # MAGIC Post-PS21/11: high predicted lapse probability can inform targeted retention
 # MAGIC discounts. It cannot inform surcharges.
@@ -262,7 +262,7 @@ est = ElasticityEstimator(
 )
 
 print("Fitting DML elasticity estimator (5-fold cross-fitting)...")
-print("This takes 2-4 minutes on a medium cluster — CatBoost nuisance models for 150k obs.")
+print("This takes 2-4 minutes on a medium cluster - CatBoost nuisance models for 150k obs.")
 est.fit(df_quotes)
 
 # COMMAND ----------
@@ -406,7 +406,7 @@ print(profit_df.iloc[::10][["price", "conversion_prob", "margin", "expected_prof
 
 # COMMAND ----------
 
-# Same segment, but this is a renewal — ENBP = current new business price
+# Same segment, but this is a renewal - ENBP = current new business price
 enbp = 650.0  # Our NB price for this risk through this channel
 
 opt_renewal = OptimalPrice(
@@ -477,7 +477,7 @@ print(report_bad.breach_detail.head(5).to_string(index=False))
 # MAGIC
 # MAGIC The FCA's PS21/11 evaluation (EP25/2, July 2025) specifically looks for
 # MAGIC systematic tenure-based price patterns. This report shows whether renewal
-# MAGIC prices correlate with tenure — a red flag for residual price walking.
+# MAGIC prices correlate with tenure - a red flag for residual price walking.
 
 # COMMAND ----------
 
@@ -493,7 +493,7 @@ print("Price by tenure band and channel:")
 print(walking.to_string(index=False))
 print()
 print("Interpretation: If mean_price_to_enbp increases with tenure band, that's a")
-print("potential PS21/11 concern — longer-tenured customers paying more relative to")
+print("potential PS21/11 concern - longer-tenured customers paying more relative to")
 print("their ENBP. A flat or declining pattern is the target post-GIPP.")
 
 # COMMAND ----------

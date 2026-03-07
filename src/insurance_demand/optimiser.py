@@ -234,7 +234,7 @@ class OptimalPrice:
                 constraints_active.append("volume_floor")
 
         if lo >= hi:
-            # Feasible set is empty or degenerate — return minimum feasible price
+            # Feasible set is empty or degenerate - return minimum feasible price
             p_opt = lo
             return OptimisationResult(
                 optimal_price=p_opt,
@@ -289,7 +289,7 @@ class OptimalPrice:
         p_hi = self._prob_at(hi)
 
         if target_prob > p_lo:
-            return None  # even at min price we're below target — infeasible
+            return None  # even at min price we're below target - infeasible
         if target_prob < p_hi:
             return hi  # all prices are feasible
 

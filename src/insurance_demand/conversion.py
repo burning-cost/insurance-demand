@@ -3,7 +3,7 @@ ConversionModel: P(buy | price, features) for new business quotes.
 
 This is the "static" demand model in the Akur8/commercial-platform sense.
 It tells you the expected conversion rate at the current quoted price. It
-does NOT give you unbiased price elasticity — for that, use ElasticityEstimator.
+does NOT give you unbiased price elasticity - for that, use ElasticityEstimator.
 
 What it does:
 - Fits a logistic GLM or CatBoost classifier on quote-level data
@@ -52,7 +52,7 @@ class ConversionModel:
 
     The logistic backend is interpretable and produces analytical marginal effects.
     CatBoost captures non-linear interactions between price, channel, and risk
-    features — typically a better fit on real data.
+    features - typically a better fit on real data.
 
     Parameters
     ----------
@@ -187,7 +187,7 @@ class ConversionModel:
         except ImportError:
             raise ImportError(
                 "catboost is required for base_estimator='catboost'. "
-                "Install it with: pip install insurance-demand[catboost]"
+                "Install it with: uv pip install insurance-demand[catboost]"
             )
 
         default_params = {
@@ -262,7 +262,7 @@ class ConversionModel:
         Computes (P(buy | price × 1.01) - P(buy | price × 0.99)) / (0.02 × price)
         i.e., dP/dPrice evaluated via central finite differences.
 
-        This is the naive marginal effect — it includes confounding from risk
+        This is the naive marginal effect - it includes confounding from risk
         features. For the debiased price elasticity, use ElasticityEstimator.
 
         Parameters

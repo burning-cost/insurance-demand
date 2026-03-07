@@ -10,8 +10,8 @@ with the risk composition effect.
 Double Machine Learning (Chernozhukov et al. 2018, Econometrics Journal)
 fixes this by:
 1. Regressing the outcome (log-conversion-rate, or logit of conversion)
-   on all confounders X — call the residual Ỹ.
-2. Regressing the treatment (log-price-ratio) on all confounders X — call
+   on all confounders X - call the residual Ỹ.
+2. Regressing the treatment (log-price-ratio) on all confounders X - call
    the residual D̃.
 3. Regressing Ỹ on D̃ to get θ = the causal price elasticity.
 
@@ -26,7 +26,7 @@ Two modes:
   Estimates a per-customer CATE (conditional ATE). Elasticity varies by
   segment. Better for targeting optimisation decisions.
 
-Both modes use CatBoost as the nuisance estimator by default — it handles
+Both modes use CatBoost as the nuisance estimator by default - it handles
 categorical features natively, which matters for insurance data where many
 key confounders (area, vehicle_group, channel) are categorical.
 
@@ -101,7 +101,7 @@ class ElasticityEstimator:
     -----
     Data requirements:
     - At minimum 20,000 observations for stable PLR estimates.
-    - The treatment must vary within confounder groups — if all your pricing
+    - The treatment must vary within confounder groups - if all your pricing
       variation is between segments (not within), DML cannot identify the
       within-segment price effect.
     - Include time effects (month or quarter dummies) in feature_cols to
@@ -184,7 +184,7 @@ class ElasticityEstimator:
         except ImportError:
             raise ImportError(
                 "doubleml is required for ElasticityEstimator. "
-                "Install with: pip install insurance-demand[dml]"
+                "Install with: uv pip install insurance-demand[dml]"
             )
 
         X_df, y, d, z = self._prepare_data(df)
@@ -233,7 +233,7 @@ class ElasticityEstimator:
         except ImportError:
             raise ImportError(
                 "econml is required for heterogeneous=True. "
-                "Install with: pip install insurance-demand[causal]"
+                "Install with: uv pip install insurance-demand[causal]"
             )
 
         X_df, y, d, z = self._prepare_data(df)

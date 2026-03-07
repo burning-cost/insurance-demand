@@ -3,12 +3,12 @@ insurance-demand: Conversion, retention, and price elasticity modelling
 for UK personal lines insurance.
 
 The problem: UK personal lines insurers set prices using risk models (pure
-premium = frequency × severity) but the market outcome depends on demand —
+premium = frequency × severity) but the market outcome depends on demand -
 the probability that a customer accepts the quoted price. Risk models do not
 tell you how to set commercial loadings. Demand models do.
 
 The regulatory context: FCA PS21/11 (effective January 2022) banned renewal
-price-walking — charging renewing customers more than new customers for
+price-walking - charging renewing customers more than new customers for
 equivalent risk. Demand modelling is not banned; it is constrained. You can
 use demand models for new business optimisation freely. For renewals, you
 can use them to identify who merits a retention discount; you cannot use
