@@ -32,7 +32,7 @@ import os
 # Clone the repo
 clone = subprocess.run(
     ["git", "clone", "--depth=1",
-     "https://github.com/burningcost/insurance-demand.git",
+     "https://github.com/burning-cost/insurance-demand.git",
      "/tmp/insurance-demand"],
     capture_output=True, text=True
 )
