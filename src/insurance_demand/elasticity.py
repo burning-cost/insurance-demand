@@ -50,7 +50,7 @@ import numpy as np
 import pandas as pd
 
 from ._types import DataFrameLike
-from .conversion import _to_pandas
+from .conversion import _to_pandas, _is_categorical
 
 
 class ElasticityEstimator:
@@ -397,7 +397,7 @@ class ElasticityEstimator:
         X_df = df[feat_cols].copy()
 
         # One-hot encode object columns (doubleml needs numeric)
-        cat_cols = [c for c in X_df.columns if X_df[c].dtype == object]
+        cat_cols = [c for c in X_df.columns if _is_categorical(X_df[c])]
         if cat_cols:
             X_df = pd.get_dummies(X_df, columns=cat_cols, drop_first=True, dtype=float)
 

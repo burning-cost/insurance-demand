@@ -146,7 +146,7 @@ class RetentionModel:
         return self
 
     def _fit_logistic(self, X: pd.DataFrame, y: np.ndarray) -> None:
-        cat_cols = [c for c in X.columns if X[c].dtype == object]
+        cat_cols = [c for c in X.columns if _is_categorical(X[c])]
         self._logistic_cat_cols = cat_cols  # store for predict-time encoding
         X_enc = pd.get_dummies(X, columns=cat_cols, drop_first=True, dtype=float)
         self._encoded_columns = X_enc.columns.tolist()
@@ -182,7 +182,7 @@ class RetentionModel:
             "allow_writing_files": False,
         }
         params = {**default_params, **(self.catboost_params or {})}
-        cat_cols = [c for c in X.columns if X[c].dtype == object]
+        cat_cols = [c for c in X.columns if _is_categorical(X[c])]
         cat_indices = [X.columns.tolist().index(c) for c in cat_cols]
         self._model = CatBoostClassifier(**params)
         self._model.fit(X, y, cat_features=cat_indices)
@@ -214,7 +214,7 @@ class RetentionModel:
 
         # One-hot encode categoricals (lifelines expects numeric)
         cat_cols = [c for c in df_surv.columns
-                    if df_surv[c].dtype == object
+                    if _is_categorical(df_surv[c])
                     and c not in (self.duration_col, self.outcome_col)]
         if cat_cols:
             df_surv = pd.get_dummies(df_surv, columns=cat_cols, drop_first=True, dtype=float)
@@ -290,7 +290,7 @@ class RetentionModel:
         """Predict 1-year lapse probability from a fitted survival model."""
         df_feats = df[self._survival_feature_cols].copy() if self._survival_feature_cols else pd.DataFrame(index=df.index)
         # Re-encode categoricals
-        cat_cols = [c for c in df_feats.columns if df_feats[c].dtype == object]
+        cat_cols = [c for c in df_feats.columns if _is_categorical(df_feats[c])]
         if cat_cols:
             df_feats = pd.get_dummies(df_feats, columns=cat_cols, drop_first=True, dtype=float)
         df_feats = df_feats.reindex(columns=self._survival_feature_cols, fill_value=0)
@@ -322,7 +322,7 @@ class RetentionModel:
             )
         df = _to_pandas(data)
         df_feats = df[self._survival_feature_cols].copy()
-        cat_cols = [c for c in df_feats.columns if df_feats[c].dtype == object]
+        cat_cols = [c for c in df_feats.columns if _is_categorical(df_feats[c])]
         if cat_cols:
             df_feats = pd.get_dummies(df_feats, columns=cat_cols, drop_first=True, dtype=float)
         df_feats = df_feats.reindex(columns=self._survival_feature_cols, fill_value=0)
@@ -504,4 +504,4 @@ class RetentionModel:
 
 
 # Re-export the shared encoding helper (same logic as in conversion.py)
-from .conversion import _encode_categoricals
+from .conversion import _encode_categoricals, _is_categorical

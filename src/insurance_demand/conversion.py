@@ -162,7 +162,7 @@ class ConversionModel:
     def _fit_logistic(self, X: pd.DataFrame, y: np.ndarray) -> None:
         """Fit sklearn LogisticRegression with standard scaling."""
         # One-hot encode categoricals for logistic
-        cat_mask = [c for c in X.columns if X[c].dtype == object]
+        cat_mask = [c for c in X.columns if _is_categorical(X[c])]
         self._logistic_cat_cols = cat_mask  # store for predict-time encoding
         X_encoded = pd.get_dummies(X, columns=cat_mask, drop_first=True, dtype=float)
         self._encoded_columns = X_encoded.columns.tolist()
@@ -203,7 +203,7 @@ class ConversionModel:
         params = {**default_params, **(self.catboost_params or {})}
 
         # Identify categorical feature indices
-        cat_cols = [c for c in X.columns if X[c].dtype == object]
+        cat_cols = [c for c in X.columns if _is_categorical(X[c])]
         cat_indices = [X.columns.tolist().index(c) for c in cat_cols]
 
         self._model = CatBoostClassifier(**params)
@@ -502,6 +502,21 @@ class ConversionModel:
 # ------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------
+
+
+def _is_categorical(s: pd.Series) -> bool:
+    """Check if a pandas Series contains categorical/string data.
+
+    Handles object, category, StringDtype, and ArrowDtype — all of which
+    can appear when converting Polars DataFrames to pandas depending on
+    the Polars + pyarrow version combination.
+    """
+    return (
+        s.dtype == object
+        or s.dtype.name == "category"
+        or pd.api.types.is_string_dtype(s)
+    )
+
 
 def _to_pandas(data: DataFrameLike) -> pd.DataFrame:
     """Convert Polars DataFrame to pandas if necessary."""
