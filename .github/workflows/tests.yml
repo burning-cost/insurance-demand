@@ -24,6 +24,6 @@ jobs:
           # Install core package and base test deps; skip heavy causal extras
           # (econml, doubleml) which are only used via lazy imports in the source
           pip install -e ".[catboost,survival,plot]"
-          pip install pytest pytest-cov
+          pip install pytest pytest-cov pyarrow
       - name: Run tests
         run: pytest
