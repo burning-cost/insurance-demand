@@ -399,4 +399,13 @@ which is structurally the case in any insurer that uses a risk model to set pric
 
 ---
 
+
+## Related Libraries
+
+| Library | What it does |
+|---------|-------------|
+| [insurance-elasticity](https://github.com/burning-cost/insurance-elasticity) | DML-based causal price elasticity estimation for renewal pricing optimisation |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation — consumes demand curves from this library to find profit-maximising factor adjustments |
+| [insurance-survival](https://github.com/burning-cost/insurance-survival) | Customer lifetime value and churn survival models — complements retention modelling with multi-period CLV projections |
+
 MIT License. Built by [Burning Cost](https://burning-cost.github.io).
