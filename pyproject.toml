@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "insurance-demand"
-version = "0.1.1"
+version = "0.1.3"
 description = "Conversion, retention, and price elasticity modelling for UK personal lines insurance"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -39,9 +39,9 @@ classifiers = [
 dependencies = [
     "numpy>=1.24",
     "polars>=1.0",
-    "pandas>=2.0",
+    "pandas>=1.5",
     "scikit-learn>=1.3",
-    "scipy>=1.11",
+    "scipy>=1.9,<1.11",
     "statsmodels>=0.14",
 ]
 
