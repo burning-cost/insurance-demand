@@ -348,6 +348,11 @@ which is structurally the case in any insurer that uses a risk model to set pric
 
 ---
 
+
+## Databricks Notebook
+
+A ready-to-run Databricks notebook benchmarking this library against standard approaches is available in [burning-cost-examples](https://github.com/burning-cost/burning-cost-examples/blob/main/notebooks/insurance_demand_demo.py).
+
 ## Other Burning Cost libraries
 
 **Model building**
