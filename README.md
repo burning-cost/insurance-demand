@@ -148,7 +148,7 @@ me = conv_model.marginal_effect(df)
 # One-way: observed vs. fitted conversion by factor level
 conv_model.oneway(df, "channel")
 
-# Export for rate-optimiser integration
+# Export for insurance-optimise integration
 demand_fn = conv_model.as_demand_callable()
 ```
 
@@ -230,7 +230,7 @@ prices, probs = curve.evaluate(price_range=(300, 900), n_points=100)
 # Plot
 curve.plot(price_range=(300, 900))
 
-# Export for rate-optimiser
+# Export for insurance-optimise
 fn = curve.as_demand_callable()
 ```
 
@@ -246,7 +246,7 @@ Constraints:
 - `min_conversion_rate`: volume floor as a conversion rate threshold
 - `min_margin_rate`: minimum required margin fraction
 
-This is single-segment pricing. For portfolio-level factor optimisation across many segments simultaneously, use the `rate-optimiser` library with demand callables from this library as inputs.
+This is single-segment pricing. For portfolio-level factor optimisation across many segments simultaneously, use the `insurance-optimise` library with demand callables from this library as inputs.
 
 ### ENBPChecker and compliance utilities
 
@@ -273,7 +273,7 @@ walking = price_walking_report(df_renewals, nb_price_col="nb_equivalent_price")
 
 **Why CatBoost for nuisance models**: Insurance features are predominantly categorical (area, vehicle group, NCD band, channel). CatBoost handles ordered and unordered categoricals natively without one-hot encoding. This matters for DML: poorly specified nuisance models leak confounding into the elasticity estimate.
 
-**Why not implement the optimiser here**: The portfolio-level factor optimisation problem (adjusting multiplicative rating factors across a multi-dimensional tariff) requires a different architecture than single-segment pricing. That's what `rate-optimiser` does. The demand library's job is to supply the demand curve; the optimiser's job is to find the factor adjustments that maximise the objective given that curve.
+**Why not implement the optimiser here**: The portfolio-level factor optimisation problem (adjusting multiplicative rating factors across a multi-dimensional tariff) requires a different architecture than single-segment pricing. That's what `insurance-optimise` does. The demand library's job is to supply the demand curve; the optimiser's job is to find the factor adjustments that maximise the objective given that curve.
 
 ---
 
@@ -364,13 +364,13 @@ which is structurally the case in any insurer that uses a risk model to set pric
 |---------|-------------|
 | [insurance-conformal](https://github.com/burning-cost/insurance-conformal) | Distribution-free prediction intervals for Tweedie models |
 | [bayesian-pricing](https://github.com/burning-cost/bayesian-pricing) | Hierarchical Bayesian models for thin-data segments |
-| [credibility](https://github.com/burning-cost/credibility) | Bühlmann-Straub credibility weighting |
+| [insurance-credibility](https://github.com/burning-cost/insurance-credibility) | Bühlmann-Straub credibility weighting |
 
 **Deployment and optimisation**
 
 | Library | Description |
 |---------|-------------|
-| [rate-optimiser](https://github.com/burning-cost/rate-optimiser) | Constrained rate change optimisation with FCA PS21/5 compliance |
+| [insurance-optimise](https://github.com/burning-cost/insurance-optimise) | Constrained rate change optimisation with FCA PS21/5 compliance |
 
 **Governance**
 
