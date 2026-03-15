@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "insurance-demand"
-version = "0.1.6"
+version = "0.1.7"
 description = "Conversion, retention, and price elasticity modelling for UK personal lines insurance"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -82,6 +82,7 @@ dev = [
 ]
 
 [project.urls]
+Homepage = "https://github.com/burning-cost/insurance-demand"
 Repository = "https://github.com/burning-cost/insurance-demand"
 Issues = "https://github.com/burning-cost/insurance-demand/issues"
 Documentation = "https://github.com/burning-cost/insurance-demand#readme"
