@@ -64,6 +64,12 @@ uv add insurance-demand[all]        # Everything
 
 ## Quick Start
 
+The full quick-start uses `ElasticityEstimator`, which requires the `dml` extra:
+
+```bash
+uv add insurance-demand[dml]
+```
+
 ```python
 from insurance_demand import ConversionModel, RetentionModel, ElasticityEstimator
 from insurance_demand import DemandCurve, OptimalPrice
@@ -92,13 +98,18 @@ retention_model.fit(df_renewals)
 lapse_probs = retention_model.predict_proba(df_renewals)
 
 # --- 4. Estimate causal price elasticity with DML ---
+# outcome_transform='identity' gives a linear probability model elasticity:
+# d[P(convert)] / d[log_price_ratio]. Use 'logit' for a log-odds specification
+# (d[log-odds] / d[log_price_ratio]) -- see ElasticityEstimator docstring.
 est = ElasticityEstimator(
     feature_cols=["age", "vehicle_group", "ncd_years", "area", "channel"],
     n_folds=5,
+    outcome_transform="identity",
 )
 est.fit(df_quotes)
+# est.summary() returns a DataFrame with columns:
+#   parameter | estimate | std_error | ci_lower_95 | ci_upper_95 | treatment | outcome | n_folds
 print(est.summary())
-# Estimated elasticity: -2.01  (95% CI: [-2.18, -1.84])
 
 # --- 5. Build a demand curve ---
 curve = DemandCurve(
@@ -195,6 +206,7 @@ est = ElasticityEstimator(
 est.fit(df_quotes)
 
 # Global estimate with SE and CI
+# Returns a DataFrame: parameter | estimate | std_error | ci_lower_95 | ci_upper_95 | ...
 est.summary()
 
 # Sensitivity: how large does unobserved confounding need to be to overturn the result?

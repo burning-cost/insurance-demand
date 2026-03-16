@@ -53,7 +53,7 @@ from .elasticity import ElasticityEstimator
 from .demand_curve import DemandCurve
 from .optimiser import OptimalPrice, OptimisationResult
 
-__version__ = "0.1.0"
+__version__ = "0.1.5"
 
 __all__ = [
     "ConversionModel",
