@@ -323,32 +323,27 @@ channel           str
 
 ---
 
+
 ## Performance
 
-Benchmarked against **naive OLS regression** (logit-transformed conversion on
-log price ratio + covariates) on synthetic UK motor PCW data (50,000 quotes,
-known true elasticity = -2.0, temporal split). See `notebooks/benchmark.py` for
-full methodology.
+Benchmarked against **naive logistic on log(quoted_price)** on synthetic UK motor PCW data — 30,000 quotes, known true price semi-elasticity = −2.0 on log(price/technical_premium). Full script: `benchmarks/run_benchmark.py`.
 
-The core result: naive OLS overstates elasticity magnitude by approximately 25–35%
-because it conflates risk composition with price sensitivity (endogeneity bias). The
-DML estimator corrects for this by residualising both outcome and treatment on all
-observed confounders before estimating the price coefficient.
+The DGP: high-risk vehicles (vehicle_group 4) receive higher technical premiums and higher commercial loadings. A naive model that regresses conversion on log(quoted_price) conflates the absolute price level with the commercial loading the customer actually responds to.
 
-| Metric                               | Naive OLS          | DML (this library) |
-|--------------------------------------|--------------------|--------------------|
-| Estimated elasticity (true = -2.0)   | ~-2.5 to -2.7      | ~-2.0 to -2.1      |
-| Elasticity bias (% of true)          | ~25%–35%           | < 5%               |
-| 95% CI covers true value             | Often no           | Yes (by design)    |
-| Segment elasticity RMSE              | Higher (fixed)     | Lower (varies)     |
-| Fit time                             | < 1s               | 3–8 min (5-fold)   |
+| Metric | Naive (log price) | Logistic (price ratio) | ConversionModel |
+|--------|------------------|------------------------|-----------------|
+| Brier score | 0.09229 | 0.09186 | 0.09186 |
+| Log-loss | 0.33132 | 0.32887 | 0.32887 |
+| Price coefficient (true = −2.0) | −0.40 | −2.09 | −2.09 |
+| Elasticity bias (abs) | 1.60 | 0.09 | 0.09 |
+| Fit time | 0.04s | 0.09s | 0.12s |
 
-Run `notebooks/benchmark.py` on Databricks to reproduce exact numbers — they vary
-slightly by run due to cross-fitting randomness, but the direction is stable.
+On predictive metrics (Brier, log-loss) the naive and correctly specified models are nearly identical — both fit the data. The difference is entirely in the price coefficient. The naive coefficient of −0.40 is dominated by the correlation between absolute price and risk class, not commercial sensitivity. ConversionModel and the correctly specified logistic both recover the true elasticity of −2.0 within 4.5%.
 
-DML confidence intervals are asymptotically valid under endogeneity. The OLS interval
-is anti-conservative when price is correlated with unobserved conversion drivers —
-which is structurally the case in any insurer that uses a risk model to set prices.
+This is the key point: you can have a well-calibrated conversion model with a completely wrong elasticity. If you use the naive coefficient as input to a demand curve or pricing optimiser, your optimised prices will be wrong by a factor of 5.
+
+The DML-based `ElasticityEstimator` (requires the `dml` extra) takes this further: it handles residual confounding that even the price/tech_prem normalisation cannot fully remove. Run `notebooks/benchmark.py` on Databricks for the full DML comparison (3–8 minutes due to cross-fitting).
+
 
 ## References
 
