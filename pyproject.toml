@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "insurance-demand"
-version = "0.1.7"
+version = "0.1.8"
 description = "Conversion, retention, and price elasticity modelling for UK personal lines insurance"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -50,11 +50,11 @@ catboost = [
     "catboost>=1.2",
 ]
 dml = [
-    "doubleml>=0.7",
+    "doubleml>=0.7,<0.9",
     "catboost>=1.2",
 ]
 causal = [
-    "econml>=0.15",
+    "econml>=0.15,<0.16",
     "catboost>=1.2",
 ]
 survival = [
@@ -65,8 +65,8 @@ plot = [
 ]
 all = [
     "catboost>=1.2",
-    "doubleml>=0.7",
-    "econml>=0.15",
+    "doubleml>=0.7,<0.9",
+    "econml>=0.15,<0.16",
     "lifelines>=0.27",
     "matplotlib>=3.7",
 ]
@@ -74,8 +74,8 @@ dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "catboost>=1.2",
-    "doubleml>=0.7",
-    "econml>=0.15",
+    "doubleml>=0.7,<0.9",
+    "econml>=0.15,<0.16",
     "lifelines>=0.27",
     "matplotlib>=3.7",
     "pyarrow>=12.0",
