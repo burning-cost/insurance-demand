@@ -3,6 +3,8 @@
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green) ![PyPI](https://img.shields.io/pypi/v/insurance-demand)
 
+> 💬 Questions or feedback? Start a [Discussion](https://github.com/burning-cost/insurance-demand/discussions). Found it useful? A ⭐ helps others find it.
+
 Conversion, retention, and price elasticity modelling for UK personal lines insurance.
 
 ---
