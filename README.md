@@ -131,12 +131,38 @@ opt = OptimalPrice(
 )
 result = opt.optimise()
 print(f"Optimal price: £{result.optimal_price:.2f}")
+print(f"Conversion prob: {result.conversion_prob:.4f}")
+print(f"Expected profit per quote: £{result.expected_profit:.2f}")
+print(f"Constraints active: {result.constraints_active}")
 
 # --- 7. Audit ENBP compliance ---
 checker = ENBPChecker()
 report = checker.check(df_renewals)
 print(report)
 ```
+
+**Expected output (n=150,000 quotes, n=80,000 renewals, synthetic data):**
+
+```
+# ElasticityEstimator fit: 26s
+          parameter  estimate  std_error  ci_lower_95  ci_upper_95        treatment    outcome  n_folds
+0  price_elasticity -0.866761   0.027732    -0.921115    -0.812408  log_price_ratio  converted        5
+
+Optimal price: £650.00
+Conversion prob: 0.0953
+Expected profit per quote: £16.44
+Constraints active: ['ENBP']
+
+ENBPBreachReport(
+  n_policies=80,000,
+  n_breaches=0 (0.00%),
+  mean_breach=£0.00,
+  max_breach=£0.00,
+  total_overpayment=£0.00
+)
+```
+
+The ENBP constraint is binding here: with `expected_loss=380` and `expense_ratio=0.15`, the unconstrained profit-maximising price lands above the £650 ENBP ceiling, so `OptimalPrice` returns exactly £650. This is the correct behaviour for a renewal segment where the PS21/11 ceiling is the binding constraint — it tells you the optimal price is the maximum permissible one.
 
 ---
 
