@@ -1,6 +1,7 @@
 # insurance-demand
 [![Tests](https://github.com/burning-cost/insurance-demand/actions/workflows/tests.yml/badge.svg)](https://github.com/burning-cost/insurance-demand/actions/workflows/tests.yml)
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/burning-cost/insurance-demand/blob/main/notebooks/quickstart.ipynb)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green) ![PyPI](https://img.shields.io/pypi/v/insurance-demand)
 
 > 💬 Questions or feedback? Start a [Discussion](https://github.com/burning-cost/insurance-demand/discussions). Found it useful? A ⭐ helps others find it.
