@@ -45,7 +45,7 @@ This library includes an `ENBPChecker` that audits a renewal portfolio for ENBP 
 
 ---
 
-## Install
+## Installation
 
 ```bash
 uv add insurance-demand
